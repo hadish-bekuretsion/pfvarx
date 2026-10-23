@@ -1,0 +1,108 @@
+# PfVarX benchmark manifest
+#
+# Declares the datasets and external tools used in benchmarking. No truth set
+# or external binary is bundled with the platform; entries here must be
+# populated with local paths before a comparative benchmark can run.
+#
+# The ablation ladder is always runnable because it uses the internal simulator
+# (see `pfvarx benchmark`). External comparison requires the tools below.
+#
+schema_version: 1
+
+simulation:
+  description: >-
+    Internal read simulator with a configurable error rate and over-dispersion.
+    Used for the ablation ladder. Deterministic given a seed.
+  default_error_rate: 0.005
+  default_overdispersion: 0.001
+  default_coverage: 60
+  default_replicates: 3
+  allele_fraction_grid: [0.01, 0.02, 0.05, 0.10, 0.20, 0.50, 1.00]
+  depth_grid: [10, 20, 30, 60, 100]
+
+splits:
+  # Independent splits are required for a scientific validation claim.
+  # Populate with dataset identifiers when truth data is available.
+  calibration:
+    dataset_id: null
+    description: Control samples used to fit error_rate and beta_binomial_rho.
+  evaluation:
+    dataset_id: null
+    description: Held-out truth set used to measure precision/recall/F1.
+  negative_controls:
+    dataset_id: null
+    description: Known-negative samples used to measure the false-positive rate.
+
+external_tools:
+  - name: bcftools
+    version: ">=1.19"
+    command: bcftools mpileup | bcftools call
+    status: not_bundled
+    reference: "Li (2011); Danecek et al. (2021)"
+  - name: freebayes
+    version: ">=1.3"
+    command: freebayes -f reference.fa aligned.bam
+    status: not_bundled
+    reference: "Garrison and Marth (2012)"
+  - name: gatk_haplotypecaller
+    version: ">=4.4"
+    command: gatk HaplotypeCaller -R reference.fa -I aligned.bam -O calls.vcf
+    status: not_bundled
+    reference: "McKenna et al. (2010); Van der Auwera et al. (2013); Poplin et al. (2018)"
+
+metrics:
+  - name: snp_precision
+    unit: fraction
+    direction: max
+  - name: snp_recall
+    unit: fraction
+    direction: max
+  - name: snp_f1
+    unit: fraction
+    direction: max
+  - name: indel_precision
+    unit: fraction
+    direction: max
+  - name: indel_recall
+    unit: fraction
+    direction: max
+  - name: indel_f1
+    unit: fraction
+    direction: max
+  - name: minority_sensitivity
+    unit: fraction
+    direction: max
+    strata: [allele_fraction, depth]
+  - name: false_positive_rate
+    unit: fraction
+    direction: max
+    source: negative_controls
+  - name: calibration_error
+    unit: fraction
+    direction: max
+  - name: homopolymer_indel_performance
+    unit: fraction
+    direction: max
+  - name: runtime_seconds
+    unit: seconds
+    direction: max
+  - name: peak_memory_mb
+    unit: MB
+    direction: max
+
+confidence_intervals:
+  method: wilson
+  level: 0.95
+  reference: "Wilson (1927); Brown, Cai and DasGupta (2001)"
+
+ablation_ladder:
+  - rung: binomial
+    decision_rule: binomial likelihood, fixed error rate, no FDR, no review
+  - rung: beta_binomial
+    decision_rule: adds over-dispersion
+  - rung: beta_binomial_lrt
+    decision_rule: adds LRT with Benjamini-Hochberg FDR
+  - rung: beta_binomial_lrt_bayes
+    decision_rule: adds Bayesian posterior gate
+  - rung: full_policy
+    decision_rule: adds review-filter downgrades and higher minimum alt count

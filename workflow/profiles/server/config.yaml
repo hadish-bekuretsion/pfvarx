@@ -1,0 +1,10 @@
+# Shared server profile — moderate parallelism.
+executor: local
+jobs: 8
+cores: 32
+resources:
+  mem_mb: 65536
+  runtime: 1440
+latency-wait: 60
+rerun-incomplete: true
+keep-going: true

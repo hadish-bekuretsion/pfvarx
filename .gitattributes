@@ -1,0 +1,39 @@
+# Normalise line endings so the repository behaves identically on Windows,
+# macOS and Linux. Text is stored with LF in the repository and checked out
+# with the platform default; binary artefacts are never converted.
+* text=auto eol=lf
+
+# Explicit text types
+*.py        text eol=lf
+*.md        text eol=lf
+*.smk       text eol=lf
+*.yaml      text eol=lf
+*.yml       text eol=lf
+*.toml      text eol=lf
+*.json      text eol=lf
+*.cfg       text eol=lf
+*.ini       text eol=lf
+*.sh        text eol=lf
+*.def       text eol=lf
+*.txt       text eol=lf
+.gitignore  text eol=lf
+.gitattributes text eol=lf
+
+# Windows entry points must keep CRLF
+*.bat       text eol=crlf
+*.cmd       text eol=crlf
+*.ps1       text eol=crlf
+
+# Binary artefacts: never diff, never convert
+*.docx      binary
+*.pdf       binary
+*.xlsx      binary
+*.png       binary
+*.jpg       binary
+*.zip       binary
+*.gz        binary
+*.bam       binary
+*.bai       binary
+*.cram      binary
+*.crai      binary
+*.bcf       binary

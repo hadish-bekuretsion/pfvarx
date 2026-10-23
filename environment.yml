@@ -1,0 +1,32 @@
+# LEGACY CONTAINER-ONLY MANIFEST. The supported user environment is pixi.toml
+# plus pixi.lock; do not use this file to create a separate analysis environment.
+name: pfvarx
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.11
+  - numpy>=1.26
+  - scipy>=1.11
+  - pandas>=2.1
+  - pydantic>=2.5
+  - pyyaml>=6.0
+  - pysam>=0.22
+  - matplotlib>=3.8
+  - openpyxl>=3.1
+  - jinja2>=3.1
+  - reportlab>=4.0
+  - streamlit>=1.30
+  # workflow / orchestration
+  - snakemake-minimal>=8.0
+  # external bioinformatics tools (versioned, guarded wrappers)
+  - bwa-mem2>=2.2
+  - samtools>=1.19
+  - bcftools>=1.19
+  - fastp>=0.23
+  - picard>=3.1
+  - multiqc>=1.21
+  - snpeff>=5.1
+  - pip
+  - pip:
+      - -e .

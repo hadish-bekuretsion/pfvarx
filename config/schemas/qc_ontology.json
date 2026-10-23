@@ -1,0 +1,25 @@
+{
+  "ontology_version": "1.0.0",
+  "status_values": ["PASS", "WARN", "FAIL", "INFO"],
+  "direction_values": ["min", "max", "range", "none"],
+  "provisional_or_validated": ["PROVISIONAL", "VALIDATED"],
+  "metrics": {
+    "read_count": {"unit": "reads", "stage": "preprocessing", "direction": "min", "provisional": true, "description": "Total reads after trimming."},
+    "q30_fraction": {"unit": "fraction", "stage": "preprocessing", "direction": "min", "provisional": true, "description": "Fraction of bases with Phred quality >= 30."},
+    "mapped_fraction": {"unit": "fraction", "stage": "preprocessing", "direction": "min", "provisional": true, "description": "Fraction of reads mapped to the reference."},
+    "duplicate_fraction": {"unit": "fraction", "stage": "preprocessing", "direction": "max", "provisional": true, "description": "Fraction of reads flagged as duplicates."},
+    "mean_depth": {"unit": "x", "stage": "calling", "direction": "min", "provisional": true, "description": "Mean informative depth over callable bases."},
+    "callable_fraction": {"unit": "fraction", "stage": "calling", "direction": "min", "provisional": true, "description": "Fraction of the target region meeting the depth threshold."},
+    "n_candidates": {"unit": "sites", "stage": "calling", "direction": "none", "provisional": true, "description": "Number of candidate sites evaluated."},
+    "n_alt_exploratory": {"unit": "sites", "stage": "calling", "direction": "none", "provisional": true, "description": "Sites called ALT_DETECTED_EXPLORATORY."},
+    "n_alt_pass": {"unit": "sites", "stage": "calling", "direction": "none", "provisional": true, "description": "Sites called ALT_PASS_VALIDATED."},
+    "n_uncertain": {"unit": "sites", "stage": "calling", "direction": "max", "provisional": true, "description": "Sites called ALT_UNCERTAIN."},
+    "filter_rate": {"unit": "fraction", "stage": "calling", "direction": "max", "provisional": true, "description": "Fraction of candidates carrying at least one review filter."},
+    "strand_bias_rate": {"unit": "fraction", "stage": "calling", "direction": "max", "provisional": true, "description": "Fraction of ALT calls flagged StrandBiasReview."},
+    "mixed_infection_flag": {"unit": "category", "stage": "downstream", "direction": "none", "provisional": true, "description": "Mixed-infection heuristic category."},
+    "n_polymorphic": {"unit": "sites", "stage": "downstream", "direction": "none", "provisional": true, "description": "Number of polymorphic sites."},
+    "n_samples": {"unit": "samples", "stage": "run", "direction": "none", "provisional": true, "description": "Number of samples in the run."},
+    "runtime_seconds": {"unit": "s", "stage": "run", "direction": "none", "provisional": true, "description": "Wall-clock runtime."},
+    "peak_memory_mb": {"unit": "MB", "stage": "run", "direction": "none", "provisional": true, "description": "Peak resident memory."}
+  }
+}

@@ -1,0 +1,11 @@
+# Cloud profile — Kubernetes executor (adjust namespace/storage class).
+executor: kubernetes
+jobs: 50
+cores: 32
+default-resources:
+  mem_mb: 16384
+  runtime: 2880
+kubernetes-namespace: pfvarx
+latency-wait: 120
+rerun-incomplete: true
+keep-going: true

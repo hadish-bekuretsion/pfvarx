@@ -1,0 +1,4 @@
+sample_id	input_type	assay	fastq_1	fastq_2	bam	vcf	metadata_json
+SAMPLE_FASTQ_01	fastq	wgs	/data/reads/S01_R1.fastq.gz	/data/reads/S01_R2.fastq.gz			
+SAMPLE_BAM_01	bam	wgs			/data/bam/S02.bam		
+SAMPLE_VCF_01	vcf	wgs				/data/vcf/S03.vcf.gz	{"country": "Ethiopia", "collection_date": "2023-11-04"}

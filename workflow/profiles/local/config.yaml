@@ -1,0 +1,11 @@
+# Local workstation profile — 8 GB RAM minimum, 2-4 threads.
+executor: local
+jobs: 1
+cores: 4
+resources:
+  mem_mb: 8192
+  runtime: 720
+latency-wait: 30
+rerun-incomplete: true
+keep-going: true
+printshellcmds: true

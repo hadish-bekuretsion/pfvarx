@@ -1,0 +1,143 @@
+# PfVarX Snakemake workflow
+#
+# Objective-driven, input-aware, resumable orchestration of the PfVarX pipeline.
+#
+#   snakemake --profile workflow/profiles/local
+#
+# How it works
+# ------------
+# 1. The workflow reads `config/config.yaml` (or `--configfile`), validates the
+#    samplesheet and routes each sample by input type.
+# 2. It resolves the analysis objectives the user selected (`objectives:` in the
+#    config).  Only the artefacts those objectives declare are requested, so an
+#    unselected analysis is never scheduled or executed.
+# 3. Evidence production is route-specific:
+#       FASTQ  -> fastp -> BWA-MEM2 -> samtools -> Picard -> caller
+#       BAM/CRAM -> reused directly by the caller (no realignment)
+#       VCF/BCF/gVCF -> imported (no realignment)
+# 4. `pfvarx run --evidence-dir` then executes *only* the selected objectives
+#    against the evidence produced above and writes `run_manifest.json`, which
+#    is the single source of truth consumed by the dashboard and exporters.
+# 5. QC and the tailored report are always produced because they summarise the
+#    run rather than add an analysis.
+#
+# All external tools are invoked through the versioned wrapper layer in
+# `pfvarx.preprocess.tools`; the statistical caller, annotation fallback, QC,
+# downstream analyses and reporting are pure-Python and always available.
+
+import os
+import sys
+from pathlib import Path
+
+sys.path.insert(0, os.path.join(workflow.basedir, "..", "src"))
+
+from pfvarx.io.validators import read_samplesheet  # noqa: E402
+from pfvarx.io.routing import plan_run  # noqa: E402
+from pfvarx.config.loader import load_config  # noqa: E402
+from pfvarx.execution import load_metadata  # noqa: E402
+from pfvarx.objectives import resolve  # noqa: E402
+
+configfile: "config/config.yaml"
+
+# Snakemake exposes config files on the workflow object, not as a Python
+# variable named `configfile`. CLI-supplied files precede the Snakefile default.
+CONFIG_FILE = str(workflow.configfiles[0]) if workflow.configfiles else "config/config.yaml"
+
+PFX = config.get("project", "PfVarX")
+RESULTS = config.get("outputs", {}).get("root", "results")
+
+_cfg = load_config(CONFIG_FILE, profile=config.get("profile"))
+_samples, _sheet = read_samplesheet(_cfg.inputs.samplesheet)
+if not _sheet.ok:
+    raise SystemExit(f"Samplesheet validation failed: {_sheet.as_dict()}")
+
+_decisions = plan_run(_samples, _cfg)
+ROUTES = {d.sample_id: d for d in _decisions}
+SAMPLES = [s.sample_id for s in _samples]
+MODE = _cfg.run.mode
+
+# ---------------------------------------------------------------------------
+# Resolve the objectives selected by the user.  `resolve()` fails closed if a
+# selected objective is missing a prerequisite (metadata, catalogue, >=2
+# samples), so the workflow never starts a run it cannot finish.
+# ---------------------------------------------------------------------------
+from pfvarx.annotation.catalogue import DEFAULT_CATALOGUE  # noqa: E402
+from pfvarx.errors import ConfigError  # noqa: E402
+
+_SELECTED = list(_cfg.objectives)
+if not _SELECTED:
+    raise SystemExit(
+        "No analysis objectives selected. Add an `objectives:` list to your "
+        "config (run `pfvarx objectives` to see the options) or pass "
+        "--config objectives='[diversity,relatedness]'."
+    )
+_METADATA = load_metadata(_samples, _cfg)
+_catalogue_path = getattr(_cfg.downstream, "resistance_catalogue", None)
+_CATALOGUE = Path(_catalogue_path).is_file() if _catalogue_path else DEFAULT_CATALOGUE.is_file()
+try:
+    _resolved = resolve(
+        _SELECTED,
+        n_samples=len(_samples),
+        have_metadata=_METADATA is not None,
+        have_catalogue=_CATALOGUE,
+    )
+except ConfigError as exc:
+    raise SystemExit(f"Cannot start run: {exc}") from exc
+if "drug_resistance" in _resolved.selected:
+    _gff = getattr(_cfg.annotation, "gff", None)
+    if not _gff or not Path(_gff).is_file():
+        raise SystemExit(
+            "Cannot start run: drug_resistance requires an existing annotation.gff GFF3 file"
+        )
+OBJECTIVES = list(_resolved.selected)
+OBJECTIVE_ARG = ",".join(OBJECTIVES)
+STAGES = list(_resolved.stages)
+
+# Evidence is required by every objective, so it is always produced.
+EVIDENCE = expand(f"{RESULTS}/{{sample}}/{{sample}}.evidence.tsv", sample=SAMPLES)
+
+include: "rules/common.smk"
+include: "rules/validate.smk"
+include: "rules/preprocess.smk"
+include: "rules/call.smk"
+include: "rules/report.smk"
+
+
+rule all:
+    input:
+        EVIDENCE,
+        f"{RESULTS}/run_manifest.json",
+        f"{RESULTS}/run_qc.json",
+        f"{RESULTS}/reports/pfvarx_results.pdf",
+
+
+# ---------------------------------------------------------------------------
+# Objective execution.  This is the only rule that runs downstream analyses,
+# and it runs exactly the objectives listed in `OBJECTIVES`.  `--evidence-dir`
+# tells the driver to reuse the evidence produced by the route-specific rules
+# instead of re-calling, which is what makes FASTQ runs possible here.
+# ---------------------------------------------------------------------------
+rule execute_objectives:
+    input:
+        evidence=EVIDENCE,
+        plan=f"{RESULTS}/routing_plan.json",
+    output:
+        manifest=f"{RESULTS}/run_manifest.json",
+    params:
+        cli=pfvarx_cli(),
+        cfg=CONFIG_FILE,
+        objectives=OBJECTIVE_ARG,
+        results=RESULTS,
+        samplesheet=config.get("inputs", {}).get("samplesheet"),
+    log:
+        f"{LOGS}/objectives.log",
+    shell:
+        """
+        mkdir -p {LOGS}
+        {params.cli} run \
+            --config {params.cfg} \
+            --samplesheet {params.samplesheet} \
+            --objectives {params.objectives} \
+            --evidence-dir {params.results} \
+            --out {params.results} 2> {log}
+        """

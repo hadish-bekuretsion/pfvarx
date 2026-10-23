@@ -1,0 +1,85 @@
+# PfVarX targeted bisulfite-free amplicon (TBS) profile without UMI — PROVISIONAL_DEVELOPMENT
+# Amplicon/PCR duplication is NOT equivalent to WGS duplication. Do not mark duplicates
+# as though ordinary WGS duplicate handling applied. Assay-specific calibration is required.
+schema_version: 1
+project: PfVarX
+run:
+  mode: tbs_no_umi
+  intent: research
+  policy_status: PROVISIONAL_DEVELOPMENT
+reference:
+  assembly_id: REQUIRED_PINNED_ASSEMBLY_ID
+  fasta: config/reference.fa
+  sha256: REQUIRED_SHA256
+  callable_mask_bed: null
+inputs:
+  samplesheet: config/samples.tsv
+  input_type: auto
+  accept_existing_bam: true
+preprocessing:
+  fastp_min_phred: 20
+  fastp_min_length: 50
+  fastp_max_n_fraction: 0.05
+  adapter_autodetect: true
+  primer_bed: null
+  mapping_quality_min: 30
+  base_quality_min: 20
+  count_overlapping_mates_once: true
+  wgs_mark_duplicates: false
+  duplicate_exclusion_from_evidence: false
+callability:
+  wgs_min_independent_depth: 10
+  targeted_min_independent_depth: 100
+  umi_min_consensus_molecules_majority: 20
+  umi_min_consensus_molecules_exploratory: 100
+  wgs_high_depth_multiplier_for_review: 5
+  wgs_max_depth_floor: 500
+  wgs_min_callable_fraction: 0.80
+candidate:
+  snp_min_alt_observations: 2
+  indel_min_alt_observations: 3
+  exploratory_min_alt_fraction: 0.01
+  max_small_indel_bp: 50
+  homopolymer_review_length: 6
+  strand_bias_alpha: 0.01
+statistics:
+  count_model: auto
+  empirical_error_profile: null
+  error_rate: null
+  beta_binomial_rho: null
+  min_alt_fraction_h1: 0.01
+  lrt_null_calibration: bootstrap
+  bootstrap_replicates: 200
+  exploratory_fdr_q: 0.05
+  sensitivity_fdr_q: 0.01
+  bayesian_enabled: false
+  bayesian_prior_h1: 0.01
+  posterior_threshold_if_validated: null
+  low_depth_fallback: conservative
+reporting:
+  minority_candidate_fraction: 0.05
+  intermediate_fraction: 0.20
+  predominant_fraction: 0.80
+  pass_requires_assay_validated_lod: true
+  uncertainty_always_visible: true
+benchmark:
+  confidence_level: 0.95
+  plan_snp_precision: 0.99
+  plan_snp_recall: 0.95
+  plan_indel_precision: 0.98
+  plan_indel_recall: 0.90
+  plan_lod_sensitivity: 0.95
+resources:
+  threads_per_sample: 2
+  concurrent_samples: 1
+  mem_mb_per_heavy_rule: 6144
+outputs:
+  root: results
+  retain_raw_evidence: true
+  atomic_writes: true
+  overwrite: false
+annotation:
+  enabled: true
+  engine: auto
+downstream:
+  enabled: []

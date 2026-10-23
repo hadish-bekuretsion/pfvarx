@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pfvarx"
+version = "0.9.0"
+description = "PfVarX: a modular, configuration-driven Plasmodium falciparum SNP/INDEL analysis platform"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "PfVarX Project"}]
+keywords = ["malaria", "Plasmodium falciparum", "variant calling", "bioinformatics", "genomics"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Bio-Informatics",
+  "Development Status :: 4 - Beta",
+]
+dependencies = [
+  "numpy>=1.24",
+  "scipy>=1.10",
+  "pandas>=2.0",
+  "pydantic>=2.5",
+  "PyYAML>=6.0",
+  "pysam>=0.22",
+  "matplotlib>=3.7",
+  "openpyxl>=3.1",
+  "Jinja2>=3.1",
+  "reportlab>=4.0",
+]
+
+[project.optional-dependencies]
+report = ["streamlit>=1.30"]
+dev = ["pytest>=7.4", "pytest-cov>=4.1", "ruff>=0.4", "hypothesis>=6.90"]
+full = ["streamlit>=1.30", "pytest>=7.4", "pytest-cov>=4.1", "ruff>=0.4", "hypothesis>=6.90"]
+
+[project.scripts]
+pfvarx = "pfvarx.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"pfvarx.annotation" = ["pf_resistance.yaml"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "C4", "SIM"]
+ignore = ["E501", "B008"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = [
+  "slow: long-running tests",
+  "integration: end-to-end workflow tests",
+]

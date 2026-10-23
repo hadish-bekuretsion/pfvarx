@@ -1,0 +1,30 @@
+Bootstrap: docker
+From: mambaorg/micromamba:1.5.8
+# LEGACY/UNVERIFIED: uses environment.yml/micromamba, not the committed pixi.lock.
+
+%labels
+    Author PfVarX contributors
+    Version 0.9.0
+    Description PfVarX — P. falciparum SNP/INDEL analysis platform (RESEARCH USE ONLY)
+
+%files
+    environment.yml /opt/pfvarx/environment.yml
+    . /opt/pfvarx
+
+%post
+    cd /opt/pfvarx
+    micromamba install -y -n base -f /opt/pfvarx/environment.yml
+    micromamba clean --all --yes
+    pip install --no-deps -e /opt/pfvarx
+    # Sanity check the pure-Python stack at build time.
+    python -c "import pfvarx; print(pfvarx.status_banner())"
+
+%environment
+    export PATH=/opt/conda/bin:$PATH
+    export PFVARX_HOME=/opt/pfvarx
+
+%runscript
+    exec pfvarx "$@"
+
+%test
+    pfvarx status

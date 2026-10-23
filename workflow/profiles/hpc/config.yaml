@@ -1,0 +1,12 @@
+# HPC profile — Slurm executor (adjust partition/account for your cluster).
+executor: slurm
+jobs: 100
+cores: 64
+default-resources:
+  slurm_partition: cpu
+  slurm_account: REQUIRED_SLURM_ACCOUNT
+  mem_mb: 16384
+  runtime: 2880
+latency-wait: 120
+rerun-incomplete: true
+keep-going: true

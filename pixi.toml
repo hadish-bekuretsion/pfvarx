@@ -1,0 +1,57 @@
+[workspace]
+name = "pfvarx"
+version = "0.9.0"
+description = "PfVarX — P. falciparum SNP and small-INDEL genomic analysis platform"
+channels = ["conda-forge", "bioconda"]
+platforms = ["linux-64", "osx-64", "linux-aarch64"]
+
+[dependencies]
+python = ">=3.11,<3.12"
+numpy = ">=1.26"
+scipy = ">=1.11"
+pandas = ">=2.1"
+pydantic = ">=2.5"
+pyyaml = ">=6.0"
+pysam = ">=0.22"
+matplotlib = ">=3.8"
+openpyxl = ">=3.1"
+jinja2 = ">=3.1"
+
+[pypi-dependencies]
+pfvarx = { path = ".", editable = true }
+
+[tasks]
+status = "pfvarx status"
+demo = "pfvarx demo --config config/profiles/wgs.yaml --out demo"
+test = "pytest -q"
+
+[feature.report.dependencies]
+reportlab = ">=4.0"
+streamlit = ">=1.30"
+
+[feature.workflow.dependencies]
+snakemake-minimal = ">=9.4,<10"
+
+[feature.workflow.pypi-dependencies]
+snakemake-executor-plugin-slurm = ">=2.8,<3"
+snakemake-executor-plugin-kubernetes = ">=0.5.1,<0.6"
+
+[feature.bio.dependencies]
+bwa-mem2 = ">=2.2"
+samtools = ">=1.19"
+bcftools = ">=1.19"
+fastp = ">=0.23"
+picard = ">=3.1"
+multiqc = ">=1.21"
+snpeff = ">=5.1"
+fgbio = ">=2.0"
+
+[feature.dev.dependencies]
+pytest = ">=8.0"
+pytest-cov = ">=5.0"
+ruff = ">=0.5"
+hypothesis = ">=6.100"
+
+[environments]
+default = { features = ["report", "dev"], solve-group = "default" }
+workflow = { features = ["workflow", "bio", "report", "dev"], solve-group = "default" }

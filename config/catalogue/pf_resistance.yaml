@@ -1,0 +1,150 @@
+# Curated P. falciparum drug-resistance marker catalogue
+#
+# IMPORTANT: This catalogue is for RESEARCH ANNOTATION ONLY. It is not a
+# clinical decision support system. Amino-acid positions are relative to the
+# canonical 3D7 reference sequence and may shift if a different assembly or
+# isoform is used. Presence of a marker is not proof of treatment failure.
+version: "1.0.0"
+assembly: "Pf3D7"
+clinical_use: "NOT_FOR_CLINICAL_USE"
+markers:
+  - gene_id: PF3D7_0709000
+    gene_name: PfCRT
+    drug: chloroquine
+    aa_change: K76T
+    evidence_level: established
+    notes: "Principal determinant of chloroquine resistance; commonly assessed with other PfCRT substitutions."
+    references:
+      - "Fidock et al. (2000) Molecular Cell 6:861-871"
+      - "Djimde et al. (2001) New England Journal of Medicine 344:257-263"
+  - gene_id: PF3D7_0709000
+    gene_name: PfCRT
+    drug: chloroquine
+    aa_change: C72S
+    evidence_level: candidate
+    notes: "Accessory PfCRT substitution associated with altered chloroquine response."
+    references:
+      - "Fidock et al. (2000) Molecular Cell 6:861-871"
+  - gene_id: PF3D7_0523000
+    gene_name: PfMDR1
+    drug: multiple
+    aa_change: N86Y
+    evidence_level: established
+    notes: "Modulates susceptibility to several antimalarials including chloroquine and amodiaquine."
+    references:
+      - "Foote et al. (1990) Nature 345:255-258"
+      - "Duraisingh et al. (2000) Journal of Infectious Diseases 181:1520-1523"
+  - gene_id: PF3D7_0523000
+    gene_name: PfMDR1
+    drug: multiple
+    aa_change: Y184F
+    evidence_level: candidate
+    notes: "Common PfMDR1 polymorphism; effect is drug- and background-dependent."
+    references:
+      - "Duraisingh et al. (2000) Journal of Infectious Diseases 181:1520-1523"
+  - gene_id: PF3D7_0523000
+    gene_name: PfMDR1
+    drug: multiple
+    aa_change: D1246Y
+    evidence_level: candidate
+    notes: "PfMDR1 polymorphism reported to modulate quinine and other drug responses."
+    references:
+      - "Reed et al. (2000) Nature 403:906-909"
+  - gene_id: PF3D7_0417200
+    gene_name: PfDHFR-TS
+    drug: pyrimethamine
+    aa_change: S108N
+    evidence_level: established
+    notes: "Core pyrimethamine-resistance substitution; often co-occurs with N51I and C59R."
+    references:
+      - "Cowman et al. (1988) Proceedings of the National Academy of Sciences 85:9109-9113"
+      - "Peterson et al. (1990) Molecular and Cellular Biology 10:2664-2669"
+  - gene_id: PF3D7_0417200
+    gene_name: PfDHFR-TS
+    drug: pyrimethamine
+    aa_change: N51I
+    evidence_level: established
+    notes: "Accessory pyrimethamine-resistance substitution."
+    references:
+      - "Cowman et al. (1988) Proceedings of the National Academy of Sciences 85:9109-9113"
+  - gene_id: PF3D7_0417200
+    gene_name: PfDHFR-TS
+    drug: pyrimethamine
+    aa_change: C59R
+    evidence_level: established
+    notes: "Accessory pyrimethamine-resistance substitution."
+    references:
+      - "Cowman et al. (1988) Proceedings of the National Academy of Sciences 85:9109-9113"
+  - gene_id: PF3D7_0417200
+    gene_name: PfDHFR-TS
+    drug: pyrimethamine
+    aa_change: I164L
+    evidence_level: established
+    notes: "High-level pyrimethamine resistance when combined with other substitutions."
+    references:
+      - "Peterson et al. (1990) Molecular and Cellular Biology 10:2664-2669"
+  - gene_id: PF3D7_0810800
+    gene_name: PfDHPS
+    drug: sulfadoxine
+    aa_change: S436A
+    evidence_level: candidate
+    notes: "Accessory sulfadoxine-resistance substitution."
+    references:
+      - "Triglia and Cowman (1994) Proceedings of the National Academy of Sciences 91:7149-7153"
+  - gene_id: PF3D7_0810800
+    gene_name: PfDHPS
+    drug: sulfadoxine
+    aa_change: A437G
+    evidence_level: established
+    notes: "Core sulfadoxine-resistance substitution."
+    references:
+      - "Triglia and Cowman (1994) Proceedings of the National Academy of Sciences 91:7149-7153"
+  - gene_id: PF3D7_0810800
+    gene_name: PfDHPS
+    drug: sulfadoxine
+    aa_change: K540E
+    evidence_level: established
+    notes: "Key sulfadoxine-resistance substitution in African parasite populations."
+    references:
+      - "Kublin et al. (2002) Journal of Infectious Diseases 185:380-388"
+  - gene_id: PF3D7_0810800
+    gene_name: PfDHPS
+    drug: sulfadoxine
+    aa_change: A581G
+    evidence_level: established
+    notes: "Associated with enhanced sulfadoxine resistance and treatment failure."
+    references:
+      - "Kublin et al. (2002) Journal of Infectious Diseases 185:380-388"
+  - gene_id: PF3D7_0810800
+    gene_name: PfDHPS
+    drug: sulfadoxine
+    aa_change: A613S
+    evidence_level: candidate
+    notes: "Accessory sulfadoxine-resistance substitution."
+    references:
+      - "Triglia and Cowman (1994) Proceedings of the National Academy of Sciences 91:7149-7153"
+  - gene_id: PF3D7_1343700
+    gene_name: PfKelch13
+    drug: artemisinin
+    aa_change: "propeller-domain nonsynonymous"
+    evidence_level: low_confidence_candidate
+    notes: "Broad nonsynonymous placeholder only; this rule has no encoded propeller-domain boundary and must not be interpreted as an established variant. Specific validated variants should be assessed against current WHO lists."
+    references:
+      - "Ariey et al. (2014) Nature 505:50-55"
+      - "Ashley et al. (2014) New England Journal of Medicine 371:411-423"
+  - gene_id: PF3D7_1211900
+    gene_name: PfATP4
+    drug: spiroindolones
+    aa_change: "nonsynonymous"
+    evidence_level: low_confidence_candidate
+    notes: "Broad nonsynonymous placeholder only; this rule is a review candidate and does not establish the effect of an arbitrary substitution. PfATP4 mutations have been selected in vitro by spiroindolones; clinical relevance is under investigation."
+    references:
+      - "Rottmann et al. (2010) Science 329:1175-1180"
+  - gene_id: PF3D7_0416900
+    gene_name: PfCYTB
+    drug: atovaquone
+    aa_change: Y268S
+    evidence_level: established
+    notes: "Cytochrome b substitution associated with atovaquone resistance."
+    references:
+      - "Korsinczky et al. (2000) Antimicrobial Agents and Chemotherapy 44:2100-2108"

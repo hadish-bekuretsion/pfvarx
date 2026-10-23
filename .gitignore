@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pixi/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# PfVarX outputs
+results/
+demo/
+reports/
+benchmarks/results/
+*.log
+
+# Data (never commit genomic data)
+*.bam
+*.bai
+*.cram
+*.crai
+*.fastq
+*.fastq.gz
+*.fq.gz
+*.vcf.gz
+*.bcf
+!tests/fixtures/*
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp

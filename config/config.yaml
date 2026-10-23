@@ -1,0 +1,88 @@
+# =============================================================================
+# PfVarX run configuration (example)
+# =============================================================================
+# Copy this file, replace every REQUIRED_* placeholder, then run:
+#
+#   pixi run -e default pfvarx init --config my_config.yaml
+#   pixi run -e default pfvarx validate --config my_config.yaml --samplesheet my_samples.tsv
+#   pixi run -e default pfvarx run --config my_config.yaml --samplesheet my_samples.tsv
+#
+# Anything you omit falls back to the mode profile (`profile:` below) and then
+# to the built-in defaults.  Precedence is:
+#     defaults  <  profile  <  this file  <  command-line flags
+# =============================================================================
+
+schema_version: 1
+project: PfVarX
+
+# Mode profile: wgs | tbs_umi | tbs_no_umi
+profile: wgs
+
+run:
+  mode: wgs
+  intent: research
+  # PROVISIONAL_DEVELOPMENT until an empirical error profile is supplied.
+  policy_status: PROVISIONAL_DEVELOPMENT
+  run_id: EXAMPLE_RUN
+
+reference:
+  # REQUIRED: a pinned assembly identifier and the matching FASTA.
+  assembly_id: REQUIRED_PINNED_ASSEMBLY_ID
+  fasta: data/reference/Pf3D7.fa
+  # REQUIRED: replace the placeholder with the matching FASTA's 64-hex SHA-256.
+  sha256: REQUIRED_SHA256
+  # Optional BED of callable regions.
+  callable_mask_bed: null
+
+inputs:
+  root: data
+  raw_dir: data/raw
+  prepared_dir: data/prepared
+  # Optional; set this when using a separate metadata table.
+  metadata_dir: null
+  samplesheet: data/prepared/samples.tsv
+  # auto | fastq | bam | cram | vcf | bcf | gvcf
+  input_type: auto
+  accept_existing_bam: true
+  require_checksums: false
+
+outputs:
+  root: results
+  # Optional independent destinations. If null, these are created under root:
+  # logs -> results/logs; work/intermediates -> results/intermediate.
+  logs_dir: null
+  work_dir: null
+  retain_raw_evidence: true
+  atomic_writes: true
+  # false = refuse known file collisions; existing staging directories are allowed.
+  overwrite: false
+
+annotation:
+  enabled: true
+  # auto | internal (SnpEff is not integrated into the per-call annotation path)
+  engine: auto
+  # REQUIRED for the drug_resistance objective.  Without a GFF3 gene model the
+  # objective reports `unavailable` instead of an empty (misleading) table.
+  gff: null
+
+# -----------------------------------------------------------------------------
+# ANALYSIS OBJECTIVES — the only analyses that will run.
+# -----------------------------------------------------------------------------
+# List exactly the scientific questions you want answered.  PfVarX works out
+# the stages and directories each one needs, and runs nothing else.
+#
+#   drug_resistance        requires annotation.gff + the resistance catalogue
+#   mixed_infection        per sample, no extra inputs
+#   coi                    per sample, ordinal indicator only
+#   diversity              per sample, no extra inputs
+#   population_structure   requires a metadata table (country/population)
+#   relatedness            requires >= 2 samples
+#   phylogenetics          requires >= 2 samples
+#   spatial_temporal       requires metadata (country and collection_date)
+#
+# Run `pfvarx objectives` for the full table.
+objectives:
+  - diversity
+  - mixed_infection
+  - relatedness
+  - phylogenetics
